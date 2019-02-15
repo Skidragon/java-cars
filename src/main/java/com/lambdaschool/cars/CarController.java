@@ -2,6 +2,8 @@ package com.lambdaschool.cars;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,5 +53,17 @@ public class CarController {
     @PostMapping("/cars/upload")
     public List<Car> uploadCars(@RequestBody List<Car> newCars) {
         return carRepo.saveAll(newCars);
+    }
+
+    @DeleteMapping("/cars/delete/{id}")
+    public ResponseEntity<?> deleteCar(@PathVariable Long id) {
+        try {
+            carRepo.deleteById(id);
+            log.info(id + " Data deleted");
+            return new ResponseEntity<>("Data deleted successfully", HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+        }
+
     }
 }
